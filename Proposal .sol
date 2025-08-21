@@ -2,8 +2,10 @@
 pragma solidity ^0.8.18;
 
 contract ProposalContract {
+    // Data
     address owner;
     uint256 private counter;
+    address[] private voted_addresses;
 
     struct Proposal {
         string title;
@@ -19,12 +21,37 @@ contract ProposalContract {
 
     constructor() {
         owner = msg.sender;
+        voted_addresses.push(owner);
     }
+
+    // Modifiers
 
     modifier ownerGuard() {
         require(msg.sender == owner, "Only Onwer can create new proposals");
         _;
     }
+
+    modifier active() {
+        require(
+            proposal_history[counter].is_active == true,
+            "The proposal is not active"
+        );
+        _;
+    }
+    modifier canUserVote() {
+        require(votedOrNot(msg.sender) == true, "Address has already voted");
+        _;
+    }
+
+    // Methods
+
+    // Change the Owner
+
+    function setOwner(address new_owner) external ownerGuard {
+        owner = new_owner;
+    }
+
+    // Create Proposal
 
     function Create(
         string calldata title,
@@ -44,29 +71,45 @@ contract ProposalContract {
         );
     }
 
-    function Vote(uint8 choice) external {
+    // Vote
+
+    function Vote(uint8 choice) external active {
         Proposal storage proposal = proposal_history[counter];
 
-        if (proposal.is_active) {
-            if (choice == 1) {
-                proposal.approve += 1;
-                ChagneTheState(proposal);
-            } else if (choice == 2) {
-                proposal.reject += 1;
-                ChagneTheState(proposal);
-            } else if (choice == 0) {
-                proposal.pass += 1;
-                ChagneTheState(proposal);
-            }
+        if (choice == 1) {
+            proposal.approve += 1;
+            voted_addresses.push(msg.sender);
+            ChagneTheState(proposal);
+        } else if (choice == 2) {
+            proposal.reject += 1;
+            ChagneTheState(proposal);
+            voted_addresses.push(msg.sender);
+        } else if (choice == 0) {
+            proposal.pass += 1;
+            ChagneTheState(proposal);
+            voted_addresses.push(msg.sender);
         }
     }
 
     // Make Proposal Active - InActive
 
-    function ChagneTheState(Proposal memory proposal) internal pure {
+    function ChagneTheState(Proposal memory proposal) private {
         uint256 total_vote = proposal.approve + proposal.reject + proposal.pass;
         if (total_vote >= proposal.total_vote_to_end) {
             proposal.is_active = false;
+            voted_addresses = [owner]; // Rest the array of voted users
         }
+
+        bool isSucceed = (proposal.approve > (proposal.reject * 2));
+        proposal.current_state = isSucceed;
+    }
+
+    // confirm that address already voted or not
+
+    function votedOrNot(address add) private view returns (bool) {
+        for (uint i = 0; i < voted_addresses.length; i++) {
+            if (voted_addresses[i] == add) return true;
+        }
+        return false;
     }
 }

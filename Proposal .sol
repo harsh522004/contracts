@@ -33,13 +33,13 @@ contract ProposalContract {
 
     modifier active() {
         require(
-            proposal_history[counter].is_active == true,
+            proposal_history[counter].is_active,
             "The proposal is not active"
         );
         _;
     }
     modifier canUserVote() {
-        require(votedOrNot(msg.sender) == true, "Address has already voted");
+        require(!votedOrNot(msg.sender), "Address has already voted");
         _;
     }
 
@@ -55,7 +55,7 @@ contract ProposalContract {
 
     function Create(
         string calldata title,
-        string memory description,
+        string calldata description,
         uint256 vote_limit
     ) external ownerGuard {
         counter += 1;
@@ -73,35 +73,37 @@ contract ProposalContract {
 
     // Vote
 
-    function Vote(uint8 choice) external active {
+    function Vote(uint8 choice) external active canUserVote {
         Proposal storage proposal = proposal_history[counter];
+
+        voted_addresses.push(msg.sender);
 
         if (choice == 1) {
             proposal.approve += 1;
-            voted_addresses.push(msg.sender);
-            ChagneTheState(proposal);
+            proposal.current_state = CalculateState(proposal);
         } else if (choice == 2) {
             proposal.reject += 1;
-            ChagneTheState(proposal);
-            voted_addresses.push(msg.sender);
+            proposal.current_state = CalculateState(proposal);
         } else if (choice == 0) {
             proposal.pass += 1;
-            ChagneTheState(proposal);
-            voted_addresses.push(msg.sender);
+            proposal.current_state = CalculateState(proposal);
+        }
+
+        uint256 total_vote = proposal.approve + proposal.reject + proposal.pass;
+        if (total_vote >= proposal.total_vote_to_end) {
+            proposal.is_active = false;
+            delete voted_addresses;
+            voted_addresses.push(owner);
         }
     }
 
     // Make Proposal Active - InActive
 
-    function ChagneTheState(Proposal memory proposal) private {
-        uint256 total_vote = proposal.approve + proposal.reject + proposal.pass;
-        if (total_vote >= proposal.total_vote_to_end) {
-            proposal.is_active = false;
-            voted_addresses = [owner]; // Rest the array of voted users
-        }
-
+    function CalculateState(
+        Proposal storage proposal
+    ) private view returns (bool) {
         bool isSucceed = (proposal.approve > (proposal.reject * 2));
-        proposal.current_state = isSucceed;
+        return isSucceed;
     }
 
     // confirm that address already voted or not
@@ -111,5 +113,19 @@ contract ProposalContract {
             if (voted_addresses[i] == add) return true;
         }
         return false;
+    }
+
+    function getCurrentProposal() external view returns (Proposal memory) {
+        return proposal_history[counter];
+    }
+
+    function getProposal(
+        uint256 number
+    ) external view returns (Proposal memory) {
+        return proposal_history[number];
+    }
+
+    function getCurrentStatus() external view returns (bool) {
+        return proposal_history[counter].current_state;
     }
 }

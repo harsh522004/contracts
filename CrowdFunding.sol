@@ -40,7 +40,8 @@ contract CrowdFunding {
         address indexed creator,
         uint256 goal,
         uint256 deadline
-    );
+    ); // when compaign created
+    event Contributed(address indexed contributor,uint256 amount , uint256 newTotal); // when someone contribute
 
     // Modifiers
     modifier ownerCheck() {
@@ -61,7 +62,17 @@ contract CrowdFunding {
         require(block.timestamp < compaign.deadline, "deadline missed!");
         _;
     }
+    modifier amountCheck(){
+        require(msg.value > 0 , "Amount of contibution is zero!");
+        _;
+    }
 
     // Contribute Anyone
-    function contribute() public {}
+    function contribute() public  payable ownerCheck stateCheck deadlineCheck  amountCheck{
+        compaign.contribution[msg.sender] += msg.value;
+        compaign.totalRaised += msg.value;
+        if(compaign.totalRaised >= compaign.goal) compaign.state = State.Successful;
+        emit Contributed(msg.sender, msg.value, compaign.totalRaised); // emit the event
+
+    }
 }

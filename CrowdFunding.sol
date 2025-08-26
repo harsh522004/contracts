@@ -41,7 +41,7 @@ contract CrowdFunding {
         uint256 goal,
         uint256 deadline
     ); // when compaign created
-    event Contributed(address indexed contributor,uint256 amount , uint256 newTotal); // when someone contribute
+    event Contributed(address indexed contributor,uint256 amount , uint256 newTotal,bool IsSucess); // when someone contribute
 
     // Modifiers
     modifier ownerCheck() {
@@ -66,13 +66,23 @@ contract CrowdFunding {
         require(msg.value > 0 , "Amount of contibution is zero!");
         _;
     }
+    modifier isDeadlineCompleted(){
+        require(block.timestamp > compaign.deadline , "compaign is still in progress!");
+        _;
+    }
 
     // Contribute Anyone
     function contribute() public  payable ownerCheck stateCheck deadlineCheck  amountCheck{
         compaign.contribution[msg.sender] += msg.value;
         compaign.totalRaised += msg.value;
-        if(compaign.totalRaised >= compaign.goal) compaign.state = State.Successful;
-        emit Contributed(msg.sender, msg.value, compaign.totalRaised); // emit the event
+        bool isSuccess = compaign.totalRaised >= compaign.goal;
+        if(isSuccess) compaign.state = State.Successful;
+        emit Contributed(msg.sender, msg.value, compaign.totalRaised,isSuccess); // emit the event
+    }
 
+    // Finalize the state of contract
+    function finalize() public isDeadlineCompleted {
+        if(compaign.totalRaised >= compaign.goal) compaign.state = State.Successful;
+        else compaign.state = State.Failed;
     }
 }

@@ -13,7 +13,7 @@ contract CrowdFunding {
 
     // Data structure of Compaign
     struct Compaign {
-        address creator;
+        address creator ;
         uint256 goal;
         uint256 deadline;
         uint256 totalRaised;
@@ -26,8 +26,8 @@ contract CrowdFunding {
     bool isWithdrawn = false;
 
     // Constructor
-    constructor(uint256 goal, uint256 durationSeconds) {
-        compaign.creator = msg.sender;
+    constructor(address creator, uint256 goal, uint256 durationSeconds) {
+        compaign.creator = creator;
         compaign.goal = goal;
         compaign.deadline = block.timestamp + durationSeconds;
         compaign.totalRaised = 0;

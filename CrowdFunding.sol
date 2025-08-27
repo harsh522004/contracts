@@ -44,55 +44,21 @@ contract CrowdFunding {
     ); // when compaign created
     event Contributed(address indexed contributor,uint256 amount , uint256 newTotal,bool IsSucess); // when someone contribute
     event Withdrawn(address indexed creator, uint256 amount);
+    event Refund(address indexed banker , uint256 amount);
 
-    // Modifiers
-    modifier ownerCheck() {
+
+    // Contribute Anyone
+    function contribute() public  payable {
         require(
             msg.sender != compaign.creator,
             "creator has no rights to contribute in compaign"
         );
-        _;
-    }
-    modifier onlyOwner() {
-        require(
-            msg.sender == compaign.creator,
-            "only owner has right to this action!"
-        );
-        _;
-    }
-    modifier stateCheck() {
         require(
             compaign.state == State.Funding,
             "compaign is not under the state FUNDING"
         );
-        _;
-    }
-    modifier  isSuccessfull(){
-        require(
-            compaign.state == State.Successful,
-            "compaign is not yet successful"
-        );
-        _;
-    }
-    modifier deadlineCheck() {
-        require(block.timestamp < compaign.deadline, "deadline missed!");
-        _;
-    }
-    modifier amountCheck(){
-        require(msg.value > 0 , "Amount of contibution is zero!");
-        _;
-    }
-    modifier isDeadlineCompleted(){
-        require(block.timestamp > compaign.deadline , "compaign is still in progress!");
-        _;
-    }
-    modifier canWithdrawn(){
-        require(compaign.totalRaised > 0 && !isWithdrawn , "Withdrawn is not possible!");
-        _;
-    }
-
-    // Contribute Anyone
-    function contribute() public  payable ownerCheck stateCheck deadlineCheck  amountCheck{
+         require(block.timestamp < compaign.deadline, "deadline missed!");
+         require(msg.value > 0 , "Amount of contibution is zero!");
         compaign.contribution[msg.sender] += msg.value;
         compaign.totalRaised += msg.value;
         bool isSuccess = compaign.totalRaised >= compaign.goal;
@@ -101,15 +67,38 @@ contract CrowdFunding {
     }
 
     // Finalize the state of contract
-    function finalize() public isDeadlineCompleted {
+    function finalize() public  {
+        require(block.timestamp > compaign.deadline , "compaign is still in progress!");
         if(compaign.totalRaised >= compaign.goal) compaign.state = State.Successful;
         else compaign.state = State.Failed;
     }
 
     // Withdrawal function
-    function withdraw()public payable  onlyOwner isSuccessfull canWithdrawn  {
+    function withdraw()public payable    {
+        require(
+            msg.sender == compaign.creator,
+            "only owner has right to this action!"
+        );
+        require(
+            compaign.state == State.Successful,
+            "compaign is not yet successful"
+        );
+        require(compaign.totalRaised > 0 && !isWithdrawn , "Withdrawn is not possible!");
         (bool success , ) =  msg.sender.call{value : compaign.totalRaised}("");
         require(success , "ETH withdrawal failed!");
         emit Withdrawn(msg.sender, compaign.totalRaised);
+    }
+
+    // Refund
+    function refund() public payable {
+        require(compaign.state == State.Failed , "compaign state is not fail");
+        require(compaign.contribution[msg.sender] > 0, "you are not contributor for compaign");
+
+        uint256 amount = compaign.contribution[msg.sender];
+        compaign.contribution[msg.sender] = 0;
+        (bool success , ) =  msg.sender.call{value : amount}("");
+        require(success , "Error occured!");
+        emit Refund(msg.sender, amount);
+
     }
 }

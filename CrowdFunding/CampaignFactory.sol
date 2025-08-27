@@ -4,7 +4,7 @@ import "./CrowdFunding.sol";
 
 contract CampaignFactory {
     
-    address[] public compaigns; // List of deployed Campaign contracts
+    address[] private  compaigns; // List of deployed Campaign contracts
     mapping (address => address[]) compaignsOf;
 
     event CompaignCreated(address indexed compaign, address indexed creator , uint256 goal, uint256 deadline);
@@ -19,5 +19,13 @@ contract CampaignFactory {
 
     function getAllCampaigns() public view returns (address[] memory) {
         return compaigns;
+    }
+
+    function getCompaignsOf(address creator) public view returns (address[] memory){
+        return compaignsOf[creator];
+    }
+
+    function compaignsCount() public view returns (uint256) {
+        return compaigns.length;
     }
 }

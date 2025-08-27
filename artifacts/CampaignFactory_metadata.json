@@ -1,0 +1,148 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "compaign",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "goal",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					}
+				],
+				"name": "CompaignCreated",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "compaignsCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "goal",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "durationSeconds",
+						"type": "uint256"
+					}
+				],
+				"name": "createCampaign",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAllCampaigns",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					}
+				],
+				"name": "getCompaignsOf",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"CrowdFunding/CampaignFactory.sol": "CampaignFactory"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"CrowdFunding/CampaignFactory.sol": {
+			"keccak256": "0x26aa1c62972ca7a4106e577990e56d3f06f5122da36d1aaf743787ca4786db08",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4a33e5d9ec84d1f6f5b361ef1ce0ecffaffb304ee49a84e09bb2887b85e2597c",
+				"dweb:/ipfs/Qmaichn4kNy1jic5wsVEnTHh7VYSgS1BYncs9g2fBvSa5q"
+			]
+		},
+		"CrowdFunding/CrowdFunding.sol": {
+			"keccak256": "0xabca9847226aa1d1208310000ab3bf8799b3d1337e8c6a083978a7ad88071d5c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f3734514a9602e672d015f1f0c5b977ee5892f032d1985d1c539a05ef4c24633",
+				"dweb:/ipfs/QmTxjzdTKZ41agV67y2jfuqpFduviZ9t2Eep4nG2BHbK9C"
+			]
+		}
+	},
+	"version": 1
+}

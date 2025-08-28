@@ -42,14 +42,14 @@ contract CampaignFactory {
         return result;
     }
 
-    function getAddressFromSalt(uint256 salt, address owner) public view returns (address){
-        bytes memory bytecode =  abi.encodePacked(type(CrowdFunding).creationCode, abi.encode(owner));
+    function getAddressFromSalt(uint256 salt, address owner, uint256 goal , uint256 durationSeconds) public view returns (address){
+        bytes memory bytecode =  abi.encodePacked(type(CrowdFunding).creationCode, abi.encode(owner,goal, durationSeconds));
          bytes32 hash = keccak256(
 
             abi.encodePacked(
 
-                bytes1(0xff), address(this), salt, keccak256(bytecode)
-          )
+                bytes1(0xff), address(this), bytes32(salt), keccak256(bytecode)
+            )
 
         );
         return address (uint160(uint(hash)));

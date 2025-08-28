@@ -28,4 +28,17 @@ contract CampaignFactory {
     function compaignsCount() public view returns (uint256) {
         return compaigns.length;
     }
+
+    function getRecent(uint256 n) public view returns (address[] memory) {
+        uint arrayLength = compaigns.length;
+        uint startIndex = arrayLength - n;
+        address[] memory result = new address[](n);
+        uint count = 0;
+        for (uint i = startIndex; i < arrayLength; i++) 
+        {
+            result[count] = compaigns[i];
+            count++;
+        }
+        return result;
+    }
 }

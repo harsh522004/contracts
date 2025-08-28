@@ -98,6 +98,25 @@
 				],
 				"stateMutability": "view",
 				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "n",
+						"type": "uint256"
+					}
+				],
+				"name": "getRecent",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
 			}
 		],
 		"devdoc": {
@@ -128,11 +147,11 @@
 	},
 	"sources": {
 		"CrowdFunding/CampaignFactory.sol": {
-			"keccak256": "0x26aa1c62972ca7a4106e577990e56d3f06f5122da36d1aaf743787ca4786db08",
+			"keccak256": "0x0c6bbfd7a059cf8496b4d957f0ebc1a9e971da4a5269425f9845854cf8029c94",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4a33e5d9ec84d1f6f5b361ef1ce0ecffaffb304ee49a84e09bb2887b85e2597c",
-				"dweb:/ipfs/Qmaichn4kNy1jic5wsVEnTHh7VYSgS1BYncs9g2fBvSa5q"
+				"bzz-raw://c2557a8c08f4e44ae6df2b6d869e778ef18b9d6f2f2946659f4e0dc0f93c0c5b",
+				"dweb:/ipfs/QmZ8FuEMsXfiENak5anF2XYhueWf1ynSEtx5rxzLocSU4B"
 			]
 		},
 		"CrowdFunding/CrowdFunding.sol": {

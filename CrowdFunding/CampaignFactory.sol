@@ -7,14 +7,14 @@ contract CampaignFactory {
     address[] private  compaigns; // List of deployed Campaign contracts
     mapping (address => address[]) compaignsOf;
 
-    event CompaignCreated(address indexed compaign, address indexed creator , uint256 goal, uint256 deadline);
+    event CompaignCreated(address indexed compaign, uint256 salt , address indexed creator , uint256 goal, uint256 deadline);
 
-    // create compaigns
-    function createCampaign(uint256 goal,uint256 durationSeconds) public  {
-        CrowdFunding newCrowdFunding = new CrowdFunding(msg.sender , goal, durationSeconds);
+    // create compaigns : All Methods are open & Not Payable
+    function createCampaign(uint256 goal,uint256 durationSeconds, uint256 salt) public  {
+        CrowdFunding newCrowdFunding = new CrowdFunding{salt : bytes32(uint256(salt))}(msg.sender , goal, durationSeconds); // added salt for Predictable Address
         compaigns.push(address(newCrowdFunding)); // add into List of deployed contracts
         compaignsOf[msg.sender].push(address(newCrowdFunding)); // add into mapping of ownership
-        emit CompaignCreated(address(newCrowdFunding), msg.sender, goal, block.timestamp + durationSeconds); // emit the event
+        emit CompaignCreated(address(newCrowdFunding), salt, msg.sender, goal, block.timestamp + durationSeconds); // emit the event
     }
 
     function getAllCampaigns() public view returns (address[] memory) {
@@ -40,5 +40,18 @@ contract CampaignFactory {
             count++;
         }
         return result;
+    }
+
+    function getAddressFromSalt(uint256 salt, address owner) public view returns (address){
+        bytes memory bytecode =  abi.encodePacked(type(CrowdFunding).creationCode, abi.encode(owner));
+         bytes32 hash = keccak256(
+
+            abi.encodePacked(
+
+                bytes1(0xff), address(this), salt, keccak256(bytecode)
+          )
+
+        );
+        return address (uint160(uint(hash)));
     }
 }

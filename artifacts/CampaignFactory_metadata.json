@@ -15,6 +15,12 @@
 						"type": "address"
 					},
 					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "salt",
+						"type": "uint256"
+					},
+					{
 						"indexed": true,
 						"internalType": "address",
 						"name": "creator",
@@ -60,11 +66,35 @@
 						"internalType": "uint256",
 						"name": "durationSeconds",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "salt",
+						"type": "uint256"
 					}
 				],
 				"name": "createCampaign",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "salt",
+						"type": "uint256"
+					}
+				],
+				"name": "getAddressFromSalt",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -147,11 +177,11 @@
 	},
 	"sources": {
 		"CrowdFunding/CampaignFactory.sol": {
-			"keccak256": "0x0c6bbfd7a059cf8496b4d957f0ebc1a9e971da4a5269425f9845854cf8029c94",
+			"keccak256": "0xdfbcef904fd982260a9fb96f29509fe5e67151ecce6db0f22c98df4497ff5cfb",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c2557a8c08f4e44ae6df2b6d869e778ef18b9d6f2f2946659f4e0dc0f93c0c5b",
-				"dweb:/ipfs/QmZ8FuEMsXfiENak5anF2XYhueWf1ynSEtx5rxzLocSU4B"
+				"bzz-raw://822d437bd6ba4f2d15e1b486e9fcc223c990f382f93232ca10af1cd88c6f6b38",
+				"dweb:/ipfs/QmZwERbe4uTUKir7XQwFz6CDNcvcCGx9hUZ78jwuMnJLxf"
 			]
 		},
 		"CrowdFunding/CrowdFunding.sol": {
